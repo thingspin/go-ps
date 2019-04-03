@@ -38,3 +38,41 @@ func Processes() ([]Process, error) {
 func FindProcess(pid int) (Process, error) {
 	return findProcess(pid)
 }
+
+func FindChildProcesses(pid int) ([]Process, error) {
+	return findChildProcesses(pid)
+}
+
+func findChildProcesses(pid int) ([]Process, error) {
+	handle, _, _ := procCreateToolhelp32Snapshot.Call(
+		0x00000002,
+		0)
+	if handle < 0 {
+		return nil, syscall.GetLastError()
+	}
+	defer procCloseHandle.Call(handle)
+
+	var entry PROCESSENTRY32
+	entry.Size = uint32(unsafe.Sizeof(entry))
+	ret, _, _ := procProcess32First.Call(handle, uintptr(unsafe.Pointer(&entry)))
+	if ret == 0 {
+		return nil, fmt.Errorf("Error retrieving process info.")
+	}
+
+	//results := make([]Process, 0, 50)
+	var results []Process
+	var ps Process
+	for {
+		//fmt.Println(entry)
+		ps = newWindowsProcess(&entry)
+		if (pid == ps.PPid()) {
+			results = append(results, ps)
+		}
+		ret, _, _ := procProcess32Next.Call(handle, uintptr(unsafe.Pointer(&entry)))
+		if ret == 0 {
+			break
+		}
+	}
+
+	return results, nil
+}
