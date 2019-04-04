@@ -99,3 +99,7 @@ func newUnixProcess(pid int) (*UnixProcess, error) {
 	p := &UnixProcess{pid: pid}
 	return p, p.Refresh()
 }
+
+func findChildProcesses(pid int) ([]Process, error) {
+	return nil, nil
+}

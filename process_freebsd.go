@@ -205,6 +205,10 @@ func processes() ([]Process, error) {
 	return results, nil
 }
 
+func findChildProcesses(pid int) ([]Process, error) {
+	return nil, nil
+}
+
 func parse_kinfo_proc(buf []byte) (Kinfo_proc, error) {
 	var k Kinfo_proc
 	br := bytes.NewReader(buf)

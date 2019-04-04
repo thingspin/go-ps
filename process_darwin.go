@@ -73,6 +73,10 @@ func processes() ([]Process, error) {
 	return darwinProcs, nil
 }
 
+func findChildProcesses(pid int) ([]Process, error) {
+	return nil, nil
+}
+
 func darwinCstring(s [16]byte) string {
 	i := 0
 	for _, b := range s {
